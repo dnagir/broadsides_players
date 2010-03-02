@@ -33,6 +33,7 @@ class Player
     
     while !shootable?(here) do    
       here = @discovery.next
+      break if here.nil?
     end    
     field[here] = :shot if here
     here
@@ -42,16 +43,18 @@ class Player
   def allocate_ships
     options =[
      "5:A1:V 4:J5:V 3:A8:H 3:I1:V 2:D1:H",
-     "5:I1:V 4:H6:V 3:E10:H 3:D7:V 2:B3:V"
+     "5:I1:V 4:H6:V 3:E10:H 3:D7:V 2:B3:V",
+     "5:E3:V 4:A2:V 3:A7:V 3:J5:V 2:I1:V",
+     "5:F10:H 4:A10:H 3:A2:V 3:H1:H 2:F4:H"
     ]
-    options.last#[rand options.length]
+    options[rand options.length]
   end
   
   # Receives count
   # Returns space delimited positions. Such as "A1 J10"
   def shot(count)
     shots = (1..count).map do
-      next_target
+      next_target || 'A1' # Out of shots already, just satisfy min-shots requirement
     end * ' '
     shots
   end
@@ -68,12 +71,20 @@ class Player
   
   # Callback for an on-target shot
   def has_hit(hit)
-    # Force shooting around
-    [ hit.to_left, 
-      hit.to_right, 
-      hit.to_up, 
-      hit.to_dn
-    ].reject { |l| l.nil? } .each { |l| @shot_queue.push l }    
+    asap = []
+    asap.push hit.to_left,  hit.to_left.to_left     if field[hit.to_right] == :hit
+    asap.push hit.to_right, hit.to_right.to_right   if field[hit.to_left] == :hit
+    asap.push hit.to_up,    hit.to_up.to_up         if field[hit.to_dn] == :hit
+    asap.push hit.to_dn,    hit.to_dn               if field[hit.to_up] == :hit
+    if asap.empty?
+      # Force shooting around
+      asap = [ hit.to_left,
+        hit.to_right,
+        hit.to_up,
+        hit.to_dn
+      ].reject { |l| l.nil? }      
+    end
+    asap.each { |l| @shot_queue.push l }
   end
   
   # Callback for a missed shot

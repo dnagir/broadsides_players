@@ -30,4 +30,11 @@ class PlayerTest < Test::Unit::TestCase
     assert_not_nil p.next_target
   end
   
+  def test_next_target_shoot_100_times
+    p = Player.new
+    100.times {
+      assert_not_nil p.next_target
+    }
+  end
+  
 end

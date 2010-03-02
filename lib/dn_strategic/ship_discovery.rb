@@ -8,7 +8,7 @@ class ShipDiscovery
   protected
   def generate_default_next
     @shots ||= (1..10).map { |y| ("A".."J").map { |x| "#{x}#{y}" } }.flatten.sort_by { rand }
-    (@shots.push @shots.shift).last
+    res = (@shots.push @shots.shift).last
   end
 end
 
@@ -53,7 +53,7 @@ class StepDiscovery < ShipDiscovery
     # Find the maximum element    
     ship_size = @guide.reject { |p| p == nil }.max || 0    
     available_positions = @guide.each_with_index.map { |p,i| p == ship_size ? i : nil }.compact
-    return generate_default_next if available_positions.empty?
+    return nil if available_positions.empty?
     next_pos = available_positions[rand available_positions.length]
     @guide[next_pos] = nil # Do not shot here anymore, been already    
     to_location next_pos    
