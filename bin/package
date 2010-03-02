@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+require 'ftools'
+File.copy('lib/dn_strategic.rb', 'dn_strategic.rb')
+
+def from_file(name)
+  File.read('lib/' + name + '.rb')
+end
+
+total = ''
+total << from_file('dn_strategic/helpers')
+total << from_file('dn_strategic/ship_discovery')
+total << from_file('dn_strategic/player')
+total << from_file('dn_strategic')
+
+open('dn_strategic.rb', 'w') { |f|
+  f.puts total
+}  
