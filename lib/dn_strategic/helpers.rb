@@ -5,7 +5,6 @@
 
 # Add small helpers to the String for grid navigation
 class String
-
   # Returns the x-coordinate which is the letter on the board (B in B5)
   def x(from = 0)
     self[0,1][0] - 65 + from # 65.chr = 'A'
