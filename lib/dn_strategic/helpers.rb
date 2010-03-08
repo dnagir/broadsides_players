@@ -43,17 +43,10 @@ end
 
 # Just want to navigate to any side as much as I want with no worries: "A1".to_left.to_left => nil
 class NilClass
-  def to_up(default = nil)
-    default
-  end
-  def to_dn(default = nil)
-    default
-  end
-  def to_left(default = nil)
-    default
-  end
-  def to_right(default = nil)
-    default
+  %w{up dn left right}.each do |what|
+    define_method("to_#{what}") do |*args|
+      args[0]
+    end
   end
 end
 
